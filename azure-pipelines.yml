@@ -10,11 +10,16 @@ pool:
   vmImage: ubuntu-latest
 
 stages:
-  - stage: A
+  - stage: stageA
     jobs:
-      - job: A
+      - job: jobA
         steps:
           - script: echo Hello Pooja
+  - stage: stageB
+    jobs:
+      - job: jobB
+        steps:
+          - script: echo Hello
 
 
 # steps:
