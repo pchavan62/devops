@@ -10,16 +10,40 @@ pool:
   vmImage: ubuntu-latest
 
 stages:
-  - stage: stageA
+  - stage: Build
     jobs:
-      - job: jobA
+      - job: mavenbuild
         steps:
-          - script: echo Hello Pooja
-  - stage: stageB
-    jobs:
-      - job: jobB
-        steps:
-          - script: echo Hello
+        - task: Maven@4
+          inputs:
+            mavenPomFile: 'pom.xml'
+            publishJUnitResults: true
+            testResultsFiles: '**/surefire-reports/TEST-*.xml'
+            javaHomeOption: 'JDKVersion'
+            mavenVersionOption: 'Default'
+            mavenAuthenticateFeed: false
+            effectivePomSkip: false
+            sonarQubeRunAnalysis: false
+        - task: PublishBuildArtifacts@1
+          inputs:
+            PathtoPublish: 'target'
+            ArtifactName: 'drop'
+  # - stage: Deploy
+  #   dependsOn: Build
+  #   jobs:
+  #   - deployment: DeployWebApp
+  #     environment: dev
+  #     strategy:
+  #       runOnce:
+  #         deploy:
+  #           steps:
+  #           - download: current
+  #             artifact: drop
+  #           - task: AzureWebApp@1
+  #             inputs:
+  #               azureSubscription: 'Azure-ServiceConnection'
+  #               appName: 'app-service-one-j'
+  #               package: '$(Pipeline.Workspace)/drop/*.jar'
 
 
 # steps:
